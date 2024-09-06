@@ -71,6 +71,13 @@ func main() {
 		}
 	case <-ctx.Done():
 		err = ctx.Err()
+		if errors.Is(err, context.DeadlineExceeded) {
+			err = errors.New("timeout")
+		} else if errors.Is(err, context.Canceled) {
+			err = errors.New("canceled")
+		} else {
+			err = fmt.Errorf("unknown context error: %w", err)
+		}
 	}
 
 	if err != nil {
